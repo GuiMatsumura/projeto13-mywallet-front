@@ -1,27 +1,30 @@
 import { useState, useContext } from "react";
 import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import TokenContext from "./context/Token";
 
-export default function LoginScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function EntryScreen() {
+  const [value, setValue] = useState("");
+  const [description, setDescription] = useState("");
 
   const [token, setToken] = useContext(TokenContext);
 
   const navigate = useNavigate();
 
-  function singIn() {
+  function entryMoney() {
     const body = {
-      email,
-      password,
+      value,
+      description,
+      type: "in",
     };
-    const promise = axios.post("http://localhost:5009/sections", body);
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    const promise = axios.post("http://localhost:5009/balance", body, config);
     promise
-      .then((res) => {
-        setToken(res.data.token);
+      .then(() => {
         navigate("/home");
       })
       .catch((err) => {
@@ -31,23 +34,20 @@ export default function LoginScreen() {
   return (
     <Body>
       <Container>
-        <h2>MyWallet</h2>
+        <h2>Nova entrada</h2>
+        <Input
+          type="number"
+          placeholder="Valor"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
         <Input
           type="text"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Descrição"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
-        <Input
-          type="password"
-          placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button onClick={singIn}>Entrar</Button>
-        <Link to="/singup">
-          <H3>Primeira vez? Cadastre-se!</H3>
-        </Link>
+        <Button onClick={entryMoney}>Salvar entrada</Button>
       </Container>
     </Body>
   );
@@ -64,15 +64,16 @@ const Body = styled.div`
 
 const Container = styled.div`
   width: 90vw;
+  height: 90vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   h2 {
     padding-bottom: 30px;
     color: #ffffff;
     font-size: 32px;
     font-family: "Poppins";
+    margin-bottom: 20px;
   }
 `;
 
@@ -106,11 +107,4 @@ const Button = styled.div`
   align-items: center;
   font-family: "Raleway";
   margin: 0px 0px 30px 0px;
-`;
-
-const H3 = styled.h3`
-  font-family: "Raleway";
-  font-size: 15px;
-  color: #ffffff;
-  text-decoration-line: underline;
 `;
