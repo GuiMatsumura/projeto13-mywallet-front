@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import dayjs from "dayjs";
 
 import TokenContext from "./context/Token";
 
@@ -9,7 +10,7 @@ export default function OutputScreen() {
   const [value, setValue] = useState("");
   const [description, setDescription] = useState("");
 
-  const [token, setToken] = useContext(TokenContext);
+  const [token] = useContext(TokenContext);
 
   const navigate = useNavigate();
 
@@ -18,6 +19,7 @@ export default function OutputScreen() {
       value,
       description,
       type: "out",
+      date: dayjs().format("DD-MM"),
     };
     const config = {
       headers: { Authorization: `Bearer ${token}` },

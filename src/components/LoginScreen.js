@@ -4,12 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import TokenContext from "./context/Token";
+import NameContext from "./context/Name";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [token, setToken] = useContext(TokenContext);
+  const [userName, setUserName] = useContext(NameContext);
 
   const navigate = useNavigate();
 
@@ -22,6 +24,7 @@ export default function LoginScreen() {
     promise
       .then((res) => {
         setToken(res.data.token);
+        setUserName(res.data.name);
         navigate("/home");
       })
       .catch((err) => {
